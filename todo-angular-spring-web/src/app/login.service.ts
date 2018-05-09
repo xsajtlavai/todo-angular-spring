@@ -49,7 +49,8 @@ export class LoginService {
     return this.jwtToken;
   }
 
-  removeJwtToken() {
+  logoutUser() {
+    this.loggedUser = null;
     this.jwtToken = null;
   }
 }

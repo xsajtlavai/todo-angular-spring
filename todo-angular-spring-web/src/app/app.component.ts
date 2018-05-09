@@ -17,4 +17,7 @@ export class AppComponent {
     return loggedUser ? loggedUser.username : null;
   }
 
+  logout() {
+    this.loginService.logoutUser();
+  }
 }

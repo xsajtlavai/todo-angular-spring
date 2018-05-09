@@ -26,7 +26,7 @@ export class JwsTokenInterceptor implements HttpInterceptor {
     }, (err: any) => {
       if (err instanceof HttpErrorResponse) {
         if (err.status === 401 || err.status === 403) {
-          this.loginService.removeJwtToken();
+          this.loginService.logoutUser();
           this.router.navigate(['/login']);
         }
       }
