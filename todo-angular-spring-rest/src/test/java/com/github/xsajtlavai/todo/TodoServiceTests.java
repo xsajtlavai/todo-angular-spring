@@ -35,8 +35,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -119,14 +118,15 @@ public class TodoServiceTests {
 	@Test
 	public void searchUsersTodos() throws Exception {
 		String tokenWithHeaderPrefix = JwtUtil.createTokenWithHeaderPrefix("user1");
-		this.todoRepository.save(new Todo("test1", true, "user1"));
+		Todo todo = this.todoRepository.save(new Todo("test1", true, "user1"));
 		this.todoRepository.save(new Todo("test2", true, "user2"));
 
 		this.mvc.perform(get("/todos/search/usersTodos")
 				.header(HttpHeaders.AUTHORIZATION, tokenWithHeaderPrefix))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$._embedded.todos", hasSize(1)))
-				.andExpect(jsonPath("$._embedded.todos[0].task", equalTo("test1")));
+				.andExpect(jsonPath("$._embedded.todos[0].task", equalTo(todo.getTask())))
+				.andExpect(jsonPath("$._embedded.todos[0]._links.self.href", endsWith("/todos/" + todo.getId())));
 	}
 
 	private String toJson(Todo todo) {
