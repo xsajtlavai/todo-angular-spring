@@ -16,9 +16,12 @@
 
 package com.github.xsajtlavai.todo;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.xsajtlavai.todo.domain.Todo;
 import com.github.xsajtlavai.todo.security.jwt.JwtUtil;
 import com.github.xsajtlavai.todo.service.TodoRepository;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,9 +29,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -86,11 +93,85 @@ public class TodoServiceTests {
 	@Test
 	public void deleteTodoWithJwtToken() throws Exception {
 		String tokenWithHeaderPrefix = JwtUtil.createTokenWithHeaderPrefix("user1");
-		Todo newTodo = this.todoRepository.save(new Todo("test", true));
+		Todo newTodo = this.todoRepository.save(new Todo("test", true, "user1"));
 
 		this.mvc.perform(delete("/todos/" + newTodo.getId())
 				.header(HttpHeaders.AUTHORIZATION, tokenWithHeaderPrefix))
 				.andExpect(status().isNoContent());
+	}
+
+	@Test
+	public void putTodoWithJwtToken() throws Exception {
+		String tokenWithHeaderPrefix = JwtUtil.createTokenWithHeaderPrefix("user1");
+		Todo newTodo = this.todoRepository.save(new Todo("test", true, "user1"));
+
+		this.mvc.perform(put("/todos/" + newTodo.getId())
+				.header(HttpHeaders.AUTHORIZATION, tokenWithHeaderPrefix)
+				.contentType(MediaType.APPLICATION_JSON_UTF8)
+				.content(toJson(newTodo)))
+				.andExpect(status().isNoContent());
+
+		Optional<Todo> todoOptional = this.todoRepository.findById(newTodo.getId());
+		Assert.assertTrue(todoOptional.isPresent());
+		Assert.assertEquals("user1", todoOptional.get().getUserId());
+	}
+
+	@Test
+	public void searchUsersTodos() throws Exception {
+		String tokenWithHeaderPrefix = JwtUtil.createTokenWithHeaderPrefix("user1");
+		this.todoRepository.save(new Todo("test1", true, "user1"));
+		this.todoRepository.save(new Todo("test2", true, "user2"));
+
+		this.mvc.perform(get("/todos/search/usersTodos")
+				.header(HttpHeaders.AUTHORIZATION, tokenWithHeaderPrefix))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$._embedded.todos", hasSize(1)))
+				.andExpect(jsonPath("$._embedded.todos[0].task", equalTo("test1")));
+	}
+
+	private String toJson(Todo todo) {
+		try {
+			ObjectMapper jsonMapper = new ObjectMapper();
+			return jsonMapper.writeValueAsString(new TodoDTO(todo));
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static class TodoDTO {
+		private String task;
+		private boolean active;
+		private String _links;
+
+		private TodoDTO(Todo todo) {
+			this.task = todo.getTask();
+			this.active = todo.getActive();
+			this._links = "http://localhost:8080/todos/?";
+		}
+
+		public String getTask() {
+			return task;
+		}
+
+		public void setTask(String task) {
+			this.task = task;
+		}
+
+		public boolean isActive() {
+			return active;
+		}
+
+		public void setActive(boolean active) {
+			this.active = active;
+		}
+
+		public String get_links() {
+			return _links;
+		}
+
+		public void set_links(String _links) {
+			this._links = _links;
+		}
 	}
 
 }

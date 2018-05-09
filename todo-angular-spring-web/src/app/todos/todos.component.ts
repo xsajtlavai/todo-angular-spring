@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {TodosService} from "../todos.service";
 import {Todo} from "../todo";
 
@@ -17,6 +17,9 @@ export class TodosComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.todosService.getAllUserTodos().subscribe(todos => {
+      this.todos = todos;
+    });
   }
 
   addTodo() {

@@ -14,9 +14,10 @@ public class Todo implements Serializable {
     public Todo() {
     }
 
-    public Todo(String task, Boolean active) {
+    public Todo(String task, Boolean active, String userId) {
         this.task = task;
         this.active = active;
+        this.userId = userId;
     }
 
     @Id
@@ -26,6 +27,8 @@ public class Todo implements Serializable {
     private String task;
 
     private Boolean active;
+
+    private String userId;
 
     public Long getId() {
         return id;
@@ -51,6 +54,14 @@ public class Todo implements Serializable {
         this.active = active;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,12 +69,13 @@ public class Todo implements Serializable {
         Todo todo = (Todo) o;
         return Objects.equals(id, todo.id) &&
                 Objects.equals(task, todo.task) &&
-                Objects.equals(active, todo.active);
+                Objects.equals(active, todo.active) &&
+                Objects.equals(userId, todo.userId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, task, active);
+        return Objects.hash(id, task, active, userId);
     }
 
     @Override
@@ -72,6 +84,7 @@ public class Todo implements Serializable {
                 "id=" + id +
                 ", task='" + task + '\'' +
                 ", active=" + active +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 }
