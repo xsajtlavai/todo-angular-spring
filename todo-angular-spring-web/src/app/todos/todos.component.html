@@ -1,3 +1,20 @@
-<p>
-  todos works!
-</p>
+<div class="container">
+  <div class="form-inline mb-2">
+    <input type="text" class="form-control mr-2" name="newTodo" [(ngModel)]="newTodo" placeholder="Add TODO" maxlength="50">
+    <button type="submit" class="btn btn-primary mr-2" (click)="addTodo()">Add</button>
+    <button type="submit" class="btn btn-danger mr-2" (click)="deleteAllInactiveTodos()">Delete inactive</button>
+  </div>
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th>TODOs:</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let todo of todos">
+      <td (click)="changeTodoActiveStatus(todo)"><span [class.inactive]="!todo.active">{{todo.task}}</span></td>
+      <td><button type="submit" class="btn btn-danger" (click)="deleteTodo(todo)">Delete</button></td>
+    </tr>
+  </table>
+</div>

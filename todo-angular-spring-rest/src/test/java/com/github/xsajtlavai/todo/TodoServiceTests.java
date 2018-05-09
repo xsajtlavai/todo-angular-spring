@@ -16,6 +16,7 @@
 
 package com.github.xsajtlavai.todo;
 
+import com.github.xsajtlavai.todo.domain.Todo;
 import com.github.xsajtlavai.todo.security.jwt.JwtUtil;
 import com.github.xsajtlavai.todo.service.TodoRepository;
 import org.junit.Before;
@@ -29,8 +30,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -81,6 +81,16 @@ public class TodoServiceTests {
 				.header(HttpHeaders.AUTHORIZATION, tokenWithHeaderPrefix))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$._embedded.todos", hasSize(0)));
+	}
+
+	@Test
+	public void deleteTodoWithJwtToken() throws Exception {
+		String tokenWithHeaderPrefix = JwtUtil.createTokenWithHeaderPrefix("user1");
+		Todo newTodo = this.todoRepository.save(new Todo("test", true));
+
+		this.mvc.perform(delete("/todos/" + newTodo.getId())
+				.header(HttpHeaders.AUTHORIZATION, tokenWithHeaderPrefix))
+				.andExpect(status().isNoContent());
 	}
 
 }

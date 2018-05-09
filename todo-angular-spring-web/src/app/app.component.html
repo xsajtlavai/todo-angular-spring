@@ -2,14 +2,14 @@
   <a class="navbar-brand" href="#">TODO's app</a>
   <div class="collapse navbar-collapse">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" routerLink="/login">Login</a>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/login" routerLinkActive="active">Login</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/todos">Todos</a>
+        <a class="nav-link" routerLink="/todos" routerLinkActive="active">Todos</a>
       </li>
     </ul>
-    <p class="navbar-text navbar-right">Signed in as <a href="#" class="navbar-link">???</a></p>
+    <p *ngIf="userName" class="navbar-text navbar-right">Signed in as <a href="#" class="navbar-link">{{userName}}</a></p>
   </div>
 </nav>
 

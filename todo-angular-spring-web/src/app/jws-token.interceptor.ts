@@ -17,7 +17,7 @@ export class JwsTokenInterceptor implements HttpInterceptor {
     if (jwtToken) {
       request = request.clone({
         setHeaders: {
-          Authorization: this.loginService.getJwtToken()
+          Authorization: jwtToken
         }
       });
     }

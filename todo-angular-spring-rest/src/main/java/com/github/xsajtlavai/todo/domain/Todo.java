@@ -11,6 +11,14 @@ public class Todo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public Todo() {
+    }
+
+    public Todo(String task, Boolean active) {
+        this.task = task;
+        this.active = active;
+    }
+
     @Id
     @GeneratedValue
     private Long id;

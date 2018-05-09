@@ -15,6 +15,10 @@ export class LoginService {
     private http: HttpClient,
   ) { }
 
+  getLoggedUser() {
+    return this.loggedUser;
+  }
+
   isUserLoggedIn(): boolean {
     return !!this.loggedUser;
   }
