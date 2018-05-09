@@ -1,0 +1,11 @@
+.idea/
+target/
+todo-angular-spring-rest/.idea/
+todo-angular-spring-rest/target/
+todo-angular-spring-web/.idea/
+todo-angular-spring-web/target/
+todo-angular-spring-web/dist/
+todo-angular-spring-web/node_modules/
+todo-angular-spring-web/node/
+todo-angular-spring-web/package-lock.json
+*.iml
